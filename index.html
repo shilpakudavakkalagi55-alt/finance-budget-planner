@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finance Tracker</title>
+    <style>
+        /* CSS for styling the finance tracker */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .container {
+            padding: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .transactions {
+            margin-top: 2rem;
+        }
+
+        .transactions table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .transactions th, .transactions td {
+            border: 1px solid #ddd;
+            padding: 0.5rem;
+            text-align: left;
+        }
+
+        .transactions th {
+            background-color: #f2f2f2;
+        }
+
+        .total {
+            margin-top: 1rem;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Finance Tracker</h1>
+    </header>
+    <div class="container">
+        <form id="transaction-form">
+            <div class="form-group">
+                <label for="description">Description</label>
+                <input type="text" id="description" placeholder="Enter description">
+            </div>
+            <div class="form-group">
+                <label for="amount">Amount</label>
+                <input type="number" id="amount" placeholder="Enter amount">
+            </div>
+            <button type="submit">Add Transaction</button>
+        </form>
+
+        <div class="transactions">
+            <h2>Transaction History</h2>
+            <table id="transaction-table">
+                <thead>
+                    <tr>
+                        <th>Description</th>
+                        <th>Amount</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Transactions will be added here dynamically -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="total">
+            Total: $<span id="total">0.00</span>
+        </div>
+    </div>
+
+    <script>
+        // JavaScript for functionality
+        const form = document.getElementById('transaction-form');
+        const transactionTable = document.getElementById('transaction-table').querySelector('tbody');
+        const totalElement = document.getElementById('total');
+
+        let transactions = [];
+
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const description = document.getElementById('description').value;
+            const amount = parseFloat(document.getElementById('amount').value);
+
+            if (description && !isNaN(amount)) {
+                const transaction = { description, amount };
+                transactions.push(transaction);
+                updateUI();
+                form.reset();
+            }
+        });
+
+        function updateUI() {
+            transactionTable.innerHTML = '';
+            let total = 0;
+
+            transactions.forEach((transaction, index) => {
+                const row = document.createElement('tr');
+
+                const descriptionCell = document.createElement('td');
+                descriptionCell.textContent = transaction.description;
+                row.appendChild(descriptionCell);
+
+                const amountCell = document.createElement('td');
+                amountCell.textContent = `$${transaction.amount.toFixed(2)}`;
+                row.appendChild(amountCell);
+
+                const actionCell = document.createElement('td');
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Delete';
+                deleteButton.addEventListener('click', () => {
+                    transactions.splice(index, 1);
+                    updateUI();
+                });
+                actionCell.appendChild(deleteButton);
+                row.appendChild(actionCell);
+
+                transactionTable.appendChild(row);
+
+                total += transaction.amount;
+            });
+
+            totalElement.textContent = total.toFixed(2);
+        }
+    </script>
+</body>
+</html>
